@@ -1,2 +1,0 @@
-requests
-tqdm>=4.56.0
