@@ -1,9 +1,8 @@
-# Foobar
+# Vimeo Downloader
 
-Download Vimeo videos and retrieve metadata such as views, likes, comments, duration.
-
+Downloads Vimeo videos and retrieve metadata such as views, likes, comments, duration of the video.
 * Easy to use and friendly API.
-* Support for downloading private Vimeo videos.
+* Support for downloading private or embed only Vimeo videos.
 * Retrieve direct URL for the video file.
 * Tested on Python and 3.6, 3.7, 3.8, 3.9
 
@@ -34,16 +33,24 @@ pip install vimeo_downloader
 >>> best_stream = s[-1] # Select the best stream
 >>> best_stream.filesize
 '166.589421 MB'
->>> best_stream._direct_url
-'https://vod-progressive.akamaized.net/exp=1611734109~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F633%2F20%2F503166067%2F2298326263.mp4~hmac=f2142488975936280f6f054fc8f0991c1ebb1c165049d0cd8c9a77ecce1a68ec/vimeo-prod-skyfire-std-us/01/633/20/503166067/2298326263.mp4'
-
-
+>>> best_stream.direct_url
+'https://vod-progressive.akamaized.net.../2298326263.mp4'
+>>> best_stream.download(download_directory='DirectoryName',filename='FileName')
+# Download video with progress bar and other information, to disable this behaviour use mute=True
+```
+### Downloading private or embed only videos 
+```python
+>>> from vimeo_downloader import Vimeo
+>>> v = Vimeo('https://player.vimeo.com/video/498617513',embedded_on='https://atpstar.com/plans-162.html') 
+```
+For embed only videos, also provide embedded_on parameter to specify the URL on which video is embedded without query parameters.
+```python
+>>> v.streams
+[Stream(240p), Stream(360p), Stream(540p), Stream(720p), Stream(1080p)]
+>>> v.streams[-1].download(download_directory='DirectoryName',filename='FileName')
+# Downloads the best stream with progress bar and other information, to disable this behaviour use mute=True
 ```
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+Distributed under the MIT licence. Read `LICENSE` for more information
