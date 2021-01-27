@@ -18,7 +18,9 @@ pip install vimeo_downloader
 ```python
 >>> from vimeo_downloader import Vimeo
 >>> v = Vimeo('https://vimeo.com/503166067')
->>> # Metadata
+```
+#### Metadata
+```python
 >>> meta = v.metadata
 >>> meta.title
 "We Don't Have To Know - Keli Holiday"
@@ -28,7 +30,9 @@ pip install vimeo_downloader
 8039
 >>> meta._fields # List of all meta data fields
 ('id', 'title', 'description'...) # Truncated for readability
->>> # Fetch download link and download stream
+```
+#### Download stream
+```python
 >>> s = v.streams
 >>> s
 [Stream(240p), Stream(360p), Stream(540p), Stream(720p), Stream(1080p)]
