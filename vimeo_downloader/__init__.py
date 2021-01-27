@@ -281,3 +281,6 @@ class Vimeo:
                 _Stream(quality=stream['quality'], direct_url=stream['url']))
         dl.sort()
         return dl
+
+    def __repr__(self):
+        return f'Vimeo<{self._url}>'
