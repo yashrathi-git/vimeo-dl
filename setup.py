@@ -14,7 +14,7 @@ from setuptools import find_packages, setup, Command
 # Package meta-data.
 NAME = 'vimeo_downloader'
 DESCRIPTION = 'Download videos and retrieve metadata from Vimeo.'
-URL = 'https://github.com/me/myproject'  # To be updated
+URL = 'https://github.com/yashrathi-git/vimeo_downloader'
 EMAIL = 'yashrathicricket@gmail.com'
 AUTHOR = 'Yash Rathi'
 REQUIRES_PYTHON = '>=3.6.0'

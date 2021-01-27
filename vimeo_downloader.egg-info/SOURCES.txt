@@ -1,0 +1,8 @@
+README.md
+setup.py
+vimeo_downloader/__init__.py
+vimeo_downloader.egg-info/PKG-INFO
+vimeo_downloader.egg-info/SOURCES.txt
+vimeo_downloader.egg-info/dependency_links.txt
+vimeo_downloader.egg-info/requires.txt
+vimeo_downloader.egg-info/top_level.txt

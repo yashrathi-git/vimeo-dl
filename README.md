@@ -4,7 +4,6 @@ Downloads Vimeo videos and retrieve metadata such as views, likes, comments, dur
 * Easy to use and friendly API.
 * Support for downloading private or embed only Vimeo videos.
 * Retrieve direct URL for the video file.
-* Tested on Python and 3.6, 3.7, 3.8, 3.9
 
 
 ## Installation
