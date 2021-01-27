@@ -64,3 +64,4 @@ For embed only videos, also provide embedded_on parameter to specify the URL on 
 
 ## License
 Distributed under the MIT licence. Read `LICENSE` for more information
+https://github.com/yashrathi-git/vimeo_downloader/blob/main/LICENCE
