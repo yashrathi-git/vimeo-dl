@@ -18,6 +18,7 @@ pip install vimeo_downloader
 ```python
 >>> from vimeo_downloader import Vimeo
 >>> v = Vimeo('https://vimeo.com/503166067')
+>>> # Metadata
 >>> meta = v.metadata
 >>> meta.title
 "We Don't Have To Know - Keli Holiday"
@@ -27,6 +28,7 @@ pip install vimeo_downloader
 8039
 >>> meta._fields # List of all meta data fields
 ('id', 'title', 'description'...) # Truncated for readability
+>>> # Fetch download link and download stream
 >>> s = v.streams
 >>> s
 [Stream(240p), Stream(360p), Stream(540p), Stream(720p), Stream(1080p)]
@@ -35,20 +37,25 @@ pip install vimeo_downloader
 '166.589421 MB'
 >>> best_stream.direct_url
 'https://vod-progressive.akamaized.net.../2298326263.mp4'
->>> best_stream.download(download_directory='DirectoryName',filename='FileName')
-# Download video with progress bar and other information, to disable this behaviour use mute=True
+>>> best_stream.download(download_directory='DirectoryName',
+                        filename='FileName')
+# Download video with progress bar and other information,
+# to disable this behaviour use mute=True
 ```
 ### Downloading private or embed only videos 
 ```python
 >>> from vimeo_downloader import Vimeo
->>> v = Vimeo('https://player.vimeo.com/video/498617513',embedded_on='https://atpstar.com/plans-162.html') 
+>>> v = Vimeo('https://player.vimeo.com/video/498617513',
+              embedded_on='https://atpstar.com/plans-162.html') 
 ```
 For embed only videos, also provide embedded_on parameter to specify the URL on which video is embedded without query parameters.
 ```python
 >>> v.streams
 [Stream(240p), Stream(360p), Stream(540p), Stream(720p), Stream(1080p)]
->>> v.streams[-1].download(download_directory='DirectoryName',filename='FileName')
-# Downloads the best stream with progress bar and other information, to disable this behaviour use mute=True
+>>> v.streams[-1].download(download_directory='DirectoryName',
+                           filename='FileName')
+# Downloads the best stream with progress bar and other information, 
+# to disable this behaviour use mute=True
 ```
 
 
