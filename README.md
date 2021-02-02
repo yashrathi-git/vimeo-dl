@@ -1,9 +1,16 @@
 # Vimeo Downloader
 
+> Download any vimeo video
+
+![](https://raw.githubusercontent.com/yashrathi-git/vimeo_downloader/main/demo.jpg)
+
+## Features
 Downloads Vimeo videos and retrieve metadata such as views, likes, comments, duration of the video.
+
 * Easy to use and friendly API.
 * Support for downloading private or embed only Vimeo videos.
 * Retrieve direct URL for the video.
+* Lightweight
 
 
 ## Installation
