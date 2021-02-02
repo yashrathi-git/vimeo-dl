@@ -259,10 +259,15 @@ class Vimeo:
         """
 
         self._meta_data = self._get_meta_data()[0]
-        self._meta_data['likes'] = self._meta_data.pop("stats_number_of_likes")
-        self._meta_data['views'] = self._meta_data.pop("stats_number_of_plays")
-        self._meta_data['number_of_comments'] = self._meta_data.pop(
-            "stats_number_of_comments")
+        try:
+            self._meta_data['likes'] = self._meta_data.pop(
+                "stats_number_of_likes")
+            self._meta_data['views'] = self._meta_data.pop(
+                "stats_number_of_plays")
+            self._meta_data['number_of_comments'] = self._meta_data.pop(
+                "stats_number_of_comments")
+        except KeyError:
+            pass
         metadata = namedtuple('Metadata', self._meta_data.keys())
         return metadata(**self._meta_data)
 

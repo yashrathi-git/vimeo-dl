@@ -1,6 +1,6 @@
 # Vimeo Downloader
 
-> Download any vimeo video
+> Download any vimeo video  
 
 ![](https://raw.githubusercontent.com/yashrathi-git/vimeo_downloader/main/demo.jpg)
 
@@ -19,6 +19,55 @@ Downloads Vimeo videos and retrieve metadata such as views, likes, comments, dur
 pip install vimeo_downloader
 ```
 
+## Examples
+
+## 1. Downloading embed only videos
+`embedded_on` is  the URL of site video is embedded on without query parameters.
+```python
+from vimeo_downloader import Vimeo
+
+# Replace these two variables to different URL to download that video
+vimeo_url = 'https://player.vimeo.com/video/498617513'
+embedded_on = 'https://atpstar.com/plans-162.html'
+# embedded_on is  the URL of site video is embedded on without query parameters.
+
+v = Vimeo(vimeo_url, embedded_on) 
+
+stream = v.streams # List of available streams of different quality
+# >> [Stream(240p), Stream(360p), Stream(540p), Stream(720p), Stream(1080p)]
+
+# Download best stream
+stream[-1].download(download_directory = 'video', filename = 'test_stream')
+
+# Download video of particular quality, example '540p'
+for s in stream:
+	if s.quality == '540p':
+		s.download(download_directory = 'video', filename = 'test_stream')
+		break
+else: # If loop never breaks
+    print("Quality not found")
+```
+## 2. Downloading a list of videos
+```python
+from vimeo_downloader import Vimeo
+
+# Replace these with other list of videos you want to download
+videos = ['https://vimeo.com/440801455',
+		 'https://vimeo.com/504420495',
+		 'https://vimeo.com/481277944']
+
+for video in videos:
+	v = Vimeo(video)
+	stream = v.streams # List of available streams of different quality
+
+	# Selecting and downloading '720p' video
+	for s in stream:
+		if s.quality == '720p': 
+			s.download(download_directory = 'video', filename = v.metadata.title)
+			break
+	else: # If the loop never break
+		print('quality not found')
+```
 ## Usage
 
 ```python
