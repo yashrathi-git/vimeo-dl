@@ -18,7 +18,7 @@ URL = 'https://github.com/yashrathi-git/vimeo_downloader'
 EMAIL = 'yashrathicricket@gmail.com'
 AUTHOR = 'Yash Rathi'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.1.2'
+VERSION = '0.1.3'
 
 REQUIRED = [
     'requests', 'tqdm>=4.56.0'
