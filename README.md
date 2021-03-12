@@ -1,8 +1,4 @@
-# Vimeo Downloader
-
-> Download any vimeo video  
-
-![](https://raw.githubusercontent.com/yashrathi-git/vimeo_downloader/main/demo.jpg)
+# Vimeo Downloader  
 
 ## Features
 Downloads Vimeo videos and retrieve metadata such as views, likes, comments, duration of the video.
