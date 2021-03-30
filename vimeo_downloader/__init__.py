@@ -6,20 +6,20 @@ Features
     * Support for downloading private or embed only Vimeo videos.
     * Retrieve direct URL for the video file.
 Usage:
-    >>> from vimeo_downloader import Vimeo
-    >>> v = Vimeo('https://vimeo.com/503166067')
-    >>> meta = v.metadata
-    >>> s = v.streams
-    >>> s
+    $ from vimeo_downloader import Vimeo
+    $ v = Vimeo('https://vimeo.com/503166067')
+    $ meta = v.metadata
+    $ s = v.streams
+    $ s
         [Stream(240p), Stream(360p), Stream(540p), Stream(720p), Stream(1080p)]
-    >>> best_stream = s[-1] # Select the best stream
-    >>> best_stream.filesize
+    $ best_stream = s[-1] # Select the best stream
+    $ best_stream.filesize
     '166.589421 MB'
-    >>> best_stream.direct_url
+    $ best_stream.direct_url
     'https://vod-progressive.akamaized.net.../2298326263.mp4'
-    >>> best_stream.download(download_directory='DirectoryName',filename='FileName')
+    $ best_stream.download(download_directory='DirectoryName',filename='FileName')
     # For private or embed only videos
-    >>> v = Vimeo('https://player.vimeo.com/video/498617513',
+    $ v = Vimeo('https://player.vimeo.com/video/498617513',
                   embedded_on='https://atpstar.com/plans-162.html') 
 """
 
@@ -28,9 +28,10 @@ import re
 from collections import namedtuple
 from tqdm import tqdm
 import os
+from typing import List
 
 headers = {
-    'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0',
+    "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0",
 }
 config = "https://player.vimeo.com/video/{}/config"
 details = "http://vimeo.com/api/v2/video/{}.json"
@@ -58,7 +59,7 @@ class _Stream:
 
     Attributes:
         direct_url : str
-            direct URL for the mp4 file 
+            direct URL for the mp4 file
         filesize : str
             Total size of file in MB
         quality : str
@@ -73,10 +74,7 @@ class _Stream:
         self._quality = quality  # Quality of the stream
 
     def __repr__(self):
-        return f'Stream({self._quality})'
-
-    def __len__(self):
-        return self.filesize
+        return f"Stream({self._quality})"
 
     def __lt__(self, other):
         """
@@ -92,7 +90,9 @@ class _Stream:
     def quality(self):
         return self._quality
 
-    def download(self, download_directory: str = '', filename: str = None, mute: bool = False):
+    def download(
+        self, download_directory: str = "", filename: str = None, mute: bool = False
+    ):
         """Downloads the video with progress bar if `mute=False`
 
         Args:
@@ -103,27 +103,30 @@ class _Stream:
 
         if filename is None:
             try:
-                filename = re.findall(
-                    r'\/(\d+\.mp4|webm$)', self._direct_url)[0]
+                filename = re.findall(r"\/(\d+\.mp4|webm$)", self._direct_url)[0]
             except IndexError:
-                filename = f'{self._quality}.mp4'
+                filename = f"{self._quality}.mp4"
         else:
-            filename += '.mp4'
+            filename += ".mp4"
         r = requests.get(self._direct_url, stream=True, headers=headers)
         if not r.ok:
             if r.status_code == 410:
-                raise URLExpired('The download URL has expired.')
-            raise RequestError(f'{r.status_code}: Unable to fetch the video.')
+                raise URLExpired("The download URL has expired.")
+            raise RequestError(f"{r.status_code}: Unable to fetch the video.")
         dp = os.path.join(download_directory, filename)
         if download_directory:
             if not os.path.isdir(download_directory):
                 os.makedirs(download_directory)
-        with open(dp, 'wb') as f:
-            total_length = int(r.headers.get('content-length'))
+        with open(dp, "wb") as f:
+            total_length = int(r.headers.get("content-length"))
             chunk_size = 1024
             if not mute:
-                for chunk in tqdm(iterable=r.iter_content(chunk_size=chunk_size), total=total_length//chunk_size,
-                                  unit='KB', desc=filename):
+                for chunk in tqdm(
+                    iterable=r.iter_content(chunk_size=chunk_size),
+                    total=total_length // chunk_size,
+                    unit="KB",
+                    desc=filename,
+                ):
                     if chunk:
                         f.write(chunk)
                         f.flush()
@@ -134,14 +137,14 @@ class _Stream:
                         f.flush()
 
     @property
-    def filesize(self):
+    def filesize(self) -> str:
         """
         Returns:
             str: Returns file size of the video in MB
         """
 
         r = requests.get(self._direct_url, stream=True, headers=headers)
-        return (str(int(r.headers.get('content-length'))/10**6) + ' MB')
+        return str(int(r.headers.get("content-length")) / 10 ** 6) + " MB"
 
 
 class Vimeo:
@@ -160,8 +163,8 @@ class Vimeo:
         """
         Args:
             url (str): URL of the vimeo video without any query parameters
-            embedded_on (str, optional): Only neccessary if the video is embed only. 
-                                         URL of the site on which the video is embedded on, without any query parameters. 
+            embedded_on (str, optional): Only neccessary if the video is embed only.
+                                         URL of the site on which the video is embedded on, without any query parameters.
                                          Defaults to None.
         """
 
@@ -169,7 +172,7 @@ class Vimeo:
         self._video_id = self._validate_url()  # Video ID at the end of the link
         self._headers = headers
         if embedded_on:
-            self._headers['Referer'] = embedded_on
+            self._headers["Referer"] = embedded_on
 
     def _validate_url(self):
         """It validates if the URL is of Vimeo and returns the video ID
@@ -179,14 +182,17 @@ class Vimeo:
         """
 
         accepted_pattern = [
-            r'^https:\/\/player.vimeo.com\/video\/(\d+)$', r'^https:\/\/vimeo.com\/(\d+)$']
+            r"^https:\/\/player.vimeo.com\/video\/(\d+)$",
+            r"^https:\/\/vimeo.com\/(\d+)$",
+        ]
         for pattern in accepted_pattern:
             match = re.findall(pattern, self._url)
             if match:
                 return match[0]
         # If none of the patterns is matched exception is raised
         raise URLNotSupported(
-            f'{self._url} is not supported. Make sure you don\'t include query parameters in the url')
+            f"{self._url} is not supported. Make sure you don't include query parameters in the url"
+        )
 
     def _extractor(self):
         """Extracts the direct mp4 link for the vimeo video
@@ -195,8 +201,7 @@ class Vimeo:
             dict: JSON data with URL information
         """
 
-        js_url = requests.get(config.format(self._video_id),
-                              headers=self._headers)
+        js_url = requests.get(config.format(self._video_id), headers=self._headers)
 
         if not js_url.ok:
             if js_url.status_code == 403:
@@ -204,34 +209,38 @@ class Vimeo:
                 html = requests.get(self._url, headers=self._headers)
                 if html.ok:
                     try:
-                        url = config.format(
-                            self._video_id).replace('/', r'\\/')
+                        url = config.format(self._video_id).replace("/", r"\\/")
                         pattern = '"({}.+?)"'.format(url)
 
-                        request_conf_link = re.findall(pattern, html.text)[
-                            0].replace(r'\/', '/')
+                        request_conf_link = re.findall(pattern, html.text)[0].replace(
+                            r"\/", "/"
+                        )
 
-                        js_url = requests.get(
-                            request_conf_link, headers=self._headers)
+                        js_url = requests.get(request_conf_link, headers=self._headers)
                         return js_url.json()
                     except IndexError:
-                        raise UnableToParseHtml('Couldn\'t find config url')
+                        raise UnableToParseHtml("Couldn't find config url")
 
                 else:
                     if html.status_code == 403:
                         raise RequestError(
-                            (f'{html.status_code}: If the video is embed only, also provide the url '
-                             'on which it is embedded, Vimeo(url=<vimeo_url>,embedded_on=<url>)'))
+                            (
+                                f"{html.status_code}: If the video is embed only, also provide the url "
+                                "on which it is embedded, Vimeo(url=<vimeo_url>,embedded_on=<url>)"
+                            )
+                        )
                     else:
                         raise RequestError(
-                            f'{html.status_code}: Unable to retrieve download links')
+                            f"{html.status_code}: Unable to retrieve download links"
+                        )
             else:
                 raise RequestError(
-                    f'{js_url.status_code}: Unable to retrieve download links')
+                    f"{js_url.status_code}: Unable to retrieve download links"
+                )
         try:
             js_url = js_url.json()
         except Exception as e:
-            raise RequestError(f'Couldn\'t retrieve download links: {e}')
+            raise RequestError(f"Couldn't retrieve download links: {e}")
         return js_url
 
     def _get_meta_data(self):
@@ -241,15 +250,15 @@ class Vimeo:
             dict: JSON data containing meta information
         """
 
-        video_info = requests.get(
-            details.format(self._video_id), headers=self._headers)
+        video_info = requests.get(details.format(self._video_id), headers=self._headers)
         if not video_info.ok:
             raise RequestError(
-                f'{video_info.status_code}: Unable to retrieve meta data.')
+                f"{video_info.status_code}: Unable to retrieve meta data."
+            )
         try:
             video_info = video_info.json()
         except Exception as e:
-            raise RequestError(f'Couldn\'t retrieve meta data: {e}')
+            raise RequestError(f"Couldn't retrieve meta data: {e}")
         return video_info
 
     @property
@@ -260,19 +269,18 @@ class Vimeo:
 
         self._meta_data = self._get_meta_data()[0]
         try:
-            self._meta_data['likes'] = self._meta_data.pop(
-                "stats_number_of_likes")
-            self._meta_data['views'] = self._meta_data.pop(
-                "stats_number_of_plays")
-            self._meta_data['number_of_comments'] = self._meta_data.pop(
-                "stats_number_of_comments")
+            self._meta_data["likes"] = self._meta_data.pop("stats_number_of_likes")
+            self._meta_data["views"] = self._meta_data.pop("stats_number_of_plays")
+            self._meta_data["number_of_comments"] = self._meta_data.pop(
+                "stats_number_of_comments"
+            )
         except KeyError:
             pass
-        metadata = namedtuple('Metadata', self._meta_data.keys())
+        metadata = namedtuple("Metadata", self._meta_data.keys())
         return metadata(**self._meta_data)
 
     @property
-    def streams(self) -> list:
+    def streams(self) -> List[_Stream]:
         """Get all available streams for a video
 
         Returns:
@@ -281,11 +289,10 @@ class Vimeo:
 
         js_url = self._extractor()
         dl = []
-        for stream in js_url['request']['files']['progressive']:
-            dl.append(
-                _Stream(quality=stream['quality'], direct_url=stream['url']))
+        for stream in js_url["request"]["files"]["progressive"]:
+            dl.append(_Stream(quality=stream["quality"], direct_url=stream["url"]))
         dl.sort()
         return dl
 
     def __repr__(self):
-        return f'Vimeo<{self._url}>'
+        return f"Vimeo<{self._url}>"
