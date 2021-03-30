@@ -1,21 +1,34 @@
 # Vimeo Downloader  
 
-## Features
+- [Vimeo Downloader](#vimeo-downloader)
+- [Features](#features)
+- [Installation](#installation)
+- [Examples](#examples)
+	- [1. Downloading embed only videos](#1-downloading-embed-only-videos)
+	- [2. Downloading a list of videos](#2-downloading-a-list-of-videos)
+- [Usage](#usage)
+	- [Metadata](#metadata)
+	- [Download stream](#download-stream)
+	- [Downloading private or embed only videos](#downloading-private-or-embed-only-videos)
+- [License](#license)
+
+# Features
 Downloads Vimeo videos and retrieve metadata such as views, likes, comments, duration of the video.
 
 * Easy to use and friendly API.
 * Support for downloading private or embed only Vimeo videos.
-* Retrieve direct URL for the video.
-* Lightweight
+* Retrieve direct(.mp4 file) URL for the video.
+* Uses type-hints for better editor autocompletion
+* Retrieve metadata such as views, likes, comments, duration of the video
 
 
-## Installation
+# Installation
 
 ```bash
 pip install vimeo_downloader
 ```
 
-## Examples
+# Examples
 
 ## 1. Downloading embed only videos
 `embedded_on` is  the URL of site video is embedded on without query parameters.
@@ -64,13 +77,13 @@ for video in videos:
 	else: # If the loop never break
 		print('quality not found')
 ```
-## Usage
+# Usage
 
 ```python
 >>> from vimeo_downloader import Vimeo
 >>> v = Vimeo('https://vimeo.com/503166067')
 ```
-#### Metadata
+## Metadata
 ```python
 >>> meta = v.metadata
 >>> meta.title
@@ -82,7 +95,7 @@ for video in videos:
 >>> meta._fields # List of all meta data fields
 ('id', 'title', 'description'...) # Truncated for readability
 ```
-#### Download stream
+## Download stream
 ```python
 >>> s = v.streams
 >>> s
@@ -97,7 +110,7 @@ for video in videos:
 # Download video with progress bar and other information,
 # to disable this behaviour use mute=True
 ```
-### Downloading private or embed only videos 
+## Downloading private or embed only videos 
 ```python
 >>> from vimeo_downloader import Vimeo
 >>> v = Vimeo('https://player.vimeo.com/video/498617513',
@@ -114,6 +127,8 @@ For embed only videos, also provide embedded_on parameter to specify the URL on 
 ```
 
 
-## License
+# License
 Distributed under the MIT licence. Read `LICENSE` for more information
 https://github.com/yashrathi-git/vimeo_downloader/blob/main/LICENCE
+
+
