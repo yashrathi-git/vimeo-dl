@@ -28,7 +28,7 @@ import re
 from collections import namedtuple
 from tqdm import tqdm
 import os
-from typing import List
+from typing import List, NamedTuple, Optional
 
 headers = {
     "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0",
@@ -52,6 +52,34 @@ class UnableToParseHtml(Exception):
 class URLExpired(RequestError):
     pass
 
+
+class Metadata(NamedTuple):
+    """
+    These predefined fields are for enchanced editor/IDE autocompletion.
+    """
+    id: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    url: Optional[str] = None
+    upload_date: Optional[str] = None
+    thumbnail_small: Optional[str] = None
+    thumbnail_medium: Optional[str] = None
+    thumbnail_large: Optional[str] = None
+    user_id: Optional[str] = None
+    user_name: Optional[str] = None
+    user_url: Optional[str] = None
+    user_portrait_small: Optional[str] = None
+    user_portrait_medium: Optional[str] = None
+    user_portrait_large: Optional[str] = None
+    user_portrait_huge: Optional[str] = None
+    duration: Optional[str] = None
+    width: Optional[str] = None
+    height: Optional[str] = None
+    tags: Optional[str] = None
+    embed_privacy: Optional[str] = None
+    likes: Optional[str] = None
+    views: Optional[str] = None
+    number_of_comments: Optional[str] = None
 
 class _Stream:
     """
@@ -262,21 +290,28 @@ class Vimeo:
         return video_info
 
     @property
-    def metadata(self):
+    def metadata(self) -> Metadata:
         """
         Fetch metadata and return it in form of namedtuple.
         """
 
         self._meta_data = self._get_meta_data()[0]
-        try:
+        if "stats_number_of_likes" in self._meta_data.keys():
             self._meta_data["likes"] = self._meta_data.pop("stats_number_of_likes")
+        if "stats_number_of_plays" in self._meta_data.keys():
             self._meta_data["views"] = self._meta_data.pop("stats_number_of_plays")
+        if "stats_number_of_comments" in self._meta_data.keys():
             self._meta_data["number_of_comments"] = self._meta_data.pop(
                 "stats_number_of_comments"
             )
-        except KeyError:
-            pass
-        metadata = namedtuple("Metadata", self._meta_data.keys())
+        
+        # If the Vimeo API returns with some unexpected fields, in some cases
+        # a regular namedtuple will be returned
+        try:
+            metadata = Metadata(**self._meta_data)
+            return metadata
+        except TypeError:
+            metadata = namedtuple("Metadata", self._meta_data.keys())
         return metadata(**self._meta_data)
 
     @property
