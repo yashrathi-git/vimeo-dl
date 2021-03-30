@@ -1,6 +1,5 @@
-# Vimeo Downloader  
+# Vimeo Downloader  <!-- omit in toc -->
 
-- [Vimeo Downloader](#vimeo-downloader)
 - [Features](#features)
 - [Installation](#installation)
 - [Examples](#examples)
