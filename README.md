@@ -10,7 +10,7 @@ Downloads Vimeo videos and retrieve metadata such as views, likes, comments, dur
 * Retrieve direct(.mp4 file) URL for the video.
 * Uses type-hints for better editor autocompletion
 * Retrieve metadata such as views, likes, comments, duration of the video
-
+***
 - [Installation](#installation)
 - [Examples](#examples)
 	- [1. Downloading embed only videos](#1-downloading-embed-only-videos)
