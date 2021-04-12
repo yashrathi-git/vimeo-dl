@@ -1,15 +1,6 @@
 # Vimeo Downloader  <!-- omit in toc -->
 
-- [Features](#features)
-- [Installation](#installation)
-- [Examples](#examples)
-	- [1. Downloading embed only videos](#1-downloading-embed-only-videos)
-	- [2. Downloading a list of videos](#2-downloading-a-list-of-videos)
-- [Usage](#usage)
-	- [Metadata](#metadata)
-	- [Download stream](#download-stream)
-	- [Downloading private or embed only videos](#downloading-private-or-embed-only-videos)
-- [License](#license)
+
 
 # Features
 Downloads Vimeo videos and retrieve metadata such as views, likes, comments, duration of the video.
@@ -20,6 +11,15 @@ Downloads Vimeo videos and retrieve metadata such as views, likes, comments, dur
 * Uses type-hints for better editor autocompletion
 * Retrieve metadata such as views, likes, comments, duration of the video
 
+- [Installation](#installation)
+- [Examples](#examples)
+	- [1. Downloading embed only videos](#1-downloading-embed-only-videos)
+	- [2. Downloading a list of videos](#2-downloading-a-list-of-videos)
+- [Usage](#usage)
+	- [Metadata](#metadata)
+	- [Download stream](#download-stream)
+	- [Downloading private or embed only videos](#downloading-private-or-embed-only-videos)
+- [License](#license)
 
 # Installation
 
