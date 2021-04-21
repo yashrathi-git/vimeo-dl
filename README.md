@@ -9,8 +9,6 @@ Downloads Vimeo videos and retrieve metadata such as views, likes, comments, dur
 
 
 # Features
-Downloads Vimeo videos and retrieve metadata such as views, likes, comments, duration of the video.
-
 * Easy to use and friendly API.
 * Support for downloading private or embed only Vimeo videos.
 * Retrieve direct(.mp4 file) URL for the video.
@@ -37,13 +35,11 @@ embedded_on = 'https://atpstar.com/plans-162.html'
 
 v = Vimeo(vimeo_url, embedded_on) 
 
-# Download best stream
-v.best_stream.download(download_directory = 'video', filename = 'test_stream')
-
 stream = v.streams # List of available streams of different quality
 # >> [Stream(240p), Stream(360p), Stream(540p), Stream(720p), Stream(1080p)]
 
-
+# Download best stream
+stream[-1].download(download_directory = 'video', filename = 'test_stream')
 
 # Download video of particular quality, example '540p'
 for s in stream:
@@ -127,5 +123,4 @@ For embed only videos, also provide embedded_on parameter to specify the URL on 
 # License
 Distributed under the MIT licence. Read `LICENSE` for more information
 https://github.com/yashrathi-git/vimeo_downloader/blob/main/LICENCE
-
 

@@ -18,7 +18,7 @@ URL = "https://github.com/yashrathi-git/vimeo_downloader"
 EMAIL = "yashrathicricket@gmail.com"
 AUTHOR = "Yash Rathi"
 REQUIRES_PYTHON = ">=3.6.0"
-VERSION = "0.2.3"
+VERSION = "0.2.4"
 
 REQUIRED = ["requests", "tqdm>=4.56.0"]
 
@@ -28,7 +28,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 # Import the README and use it as the long-description.
 # Note: this will only work if 'README.md' is present in your MANIFEST.in file!
 try:
-    with io.open(os.path.join(here, "README-PYPI.md"), encoding="utf-8") as f:
+    with io.open(os.path.join(here, "README.md"), encoding="utf-8") as f:
         long_description = "\n" + f.read()
 except FileNotFoundError:
     long_description = DESCRIPTION
