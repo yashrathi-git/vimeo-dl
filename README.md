@@ -1,5 +1,11 @@
 # Vimeo Downloader  <!-- omit in toc -->
+Downloads Vimeo videos and retrieve metadata such as views, likes, comments, duration of the video.
 
+
+* [Features](#features)
+* [Installation](#installation)
+* [Examples](#examples)
+* [Usage](#usage)
 
 
 # Features
@@ -10,16 +16,6 @@ Downloads Vimeo videos and retrieve metadata such as views, likes, comments, dur
 * Retrieve direct(.mp4 file) URL for the video.
 * Uses type-hints for better editor autocompletion
 * Retrieve metadata such as views, likes, comments, duration of the video
-***
-- [Installation](#installation)
-- [Examples](#examples)
-	- [1. Downloading embed only videos](#1-downloading-embed-only-videos)
-	- [2. Downloading a list of videos](#2-downloading-a-list-of-videos)
-- [Usage](#usage)
-	- [Metadata](#metadata)
-	- [Download stream](#download-stream)
-	- [Downloading private or embed only videos](#downloading-private-or-embed-only-videos)
-- [License](#license)
 
 # Installation
 
@@ -41,11 +37,13 @@ embedded_on = 'https://atpstar.com/plans-162.html'
 
 v = Vimeo(vimeo_url, embedded_on) 
 
+# Download best stream
+v.best_stream.download(download_directory = 'video', filename = 'test_stream')
+
 stream = v.streams # List of available streams of different quality
 # >> [Stream(240p), Stream(360p), Stream(540p), Stream(720p), Stream(1080p)]
 
-# Download best stream
-stream[-1].download(download_directory = 'video', filename = 'test_stream')
+
 
 # Download video of particular quality, example '540p'
 for s in stream:
