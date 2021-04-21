@@ -57,6 +57,7 @@ class Metadata(NamedTuple):
     """
     These predefined fields are for enchanced editor/IDE autocompletion.
     """
+
     id: Optional[str] = None
     title: Optional[str] = None
     description: Optional[str] = None
@@ -81,22 +82,8 @@ class Metadata(NamedTuple):
     views: Optional[str] = None
     number_of_comments: Optional[str] = None
 
+
 class _Stream:
-    """
-    Downloads mp4 files from vimeo as used by :class:`Vimeo`.
-
-    Attributes:
-        direct_url : str
-            direct URL for the mp4 file
-        filesize : str
-            Total size of file in MB
-        quality : str
-            Quality of the stream
-
-    Method:
-        download(download_directory = '', filename = None, mute = False)
-    """
-
     def __init__(self, direct_url: str, quality: str):
         self._direct_url = direct_url  # Direct url for the mp4 file
         self._quality = quality  # Quality of the stream
@@ -121,12 +108,8 @@ class _Stream:
     def download(
         self, download_directory: str = "", filename: str = None, mute: bool = False
     ):
-        """Downloads the video with progress bar if `mute=False`
-
-        Args:
-            download_directory (str, optional): Download directory for the video. Defaults to ''.
-            filename (str, optional): File name with which video is saved. Defaults to None.
-            mute (bool, optional): If it is False progress bar, download speed and ETA is displayed. Defaults to False.
+        """
+        Downloads the video with progress bar if `mute=False`
         """
 
         if filename is None:
@@ -167,8 +150,7 @@ class _Stream:
     @property
     def filesize(self) -> str:
         """
-        Returns:
-            str: Returns file size of the video in MB
+        Returns str with filesize in MB.
         """
 
         r = requests.get(self._direct_url, stream=True, headers=headers)
@@ -178,24 +160,10 @@ class _Stream:
 class Vimeo:
 
     """
-    This is for fetching meta data and returns :class:`_Stream` object which could be used to download videos.
-
-    Attributes:
-        metadata
-            namedtuple containing meta data
-        streams : list
-            List containing all available qualities
+    Fetch meta data and download video streams.
     """
 
     def __init__(self, url: str, embedded_on: str = None):
-        """
-        Args:
-            url (str): URL of the vimeo video without any query parameters
-            embedded_on (str, optional): Only neccessary if the video is embed only.
-                                         URL of the site on which the video is embedded on, without any query parameters.
-                                         Defaults to None.
-        """
-
         self._url = url  # URL for the vimeo video
         self._video_id = self._validate_url()  # Video ID at the end of the link
         self._headers = headers
@@ -203,10 +171,8 @@ class Vimeo:
             self._headers["Referer"] = embedded_on
 
     def _validate_url(self):
-        """It validates if the URL is of Vimeo and returns the video ID
-
-        Returns:
-            str: Video ID of the video
+        """
+        This validates if the URL is of Vimeo and returns the video ID
         """
 
         accepted_pattern = [
@@ -222,11 +188,9 @@ class Vimeo:
             f"{self._url} is not supported. Make sure you don't include query parameters in the url"
         )
 
-    def _extractor(self):
-        """Extracts the direct mp4 link for the vimeo video
-
-        Returns:
-            dict: JSON data with URL information
+    def _extractor(self) -> dict:
+        """
+        Extracts the direct mp4 link for the vimeo video
         """
 
         js_url = requests.get(config.format(self._video_id), headers=self._headers)
@@ -272,10 +236,8 @@ class Vimeo:
         return js_url
 
     def _get_meta_data(self):
-        """Retrieves meta data for the video
-
-        Returns:
-            dict: JSON data containing meta information
+        """
+        Retrieves meta data for the video
         """
 
         video_info = requests.get(details.format(self._video_id), headers=self._headers)
@@ -304,7 +266,7 @@ class Vimeo:
             self._meta_data["number_of_comments"] = self._meta_data.pop(
                 "stats_number_of_comments"
             )
-        
+
         # If the Vimeo API returns with some unexpected fields, in some cases
         # a regular namedtuple will be returned
         try:
@@ -316,10 +278,8 @@ class Vimeo:
 
     @property
     def streams(self) -> List[_Stream]:
-        """Get all available streams for a video
-
-        Returns:
-            list: Return :class:`_Stream` objects in list
+        """
+        Get all available streams for a video
         """
 
         js_url = self._extractor()
@@ -328,6 +288,10 @@ class Vimeo:
             dl.append(_Stream(quality=stream["quality"], direct_url=stream["url"]))
         dl.sort()
         return dl
+
+    @property
+    def best_stream(self) -> _Stream:
+        return self.streams[-1]
 
     def __repr__(self):
         return f"Vimeo<{self._url}>"
