@@ -1,4 +1,7 @@
 # Vimeo Downloader  <!-- omit in toc -->
+[![PyPI](https://img.shields.io/pypi/v/vimeo_downloader?color=blue)](https://pypi.org/project/vimeo-downloader/)
+![PyPI - License](https://img.shields.io/pypi/l/vimeo_downloader?color=blue)
+
 Downloads Vimeo videos and retrieve metadata such as views, likes, comments, duration of the video.
 
 
