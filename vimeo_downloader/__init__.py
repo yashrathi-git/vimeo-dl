@@ -178,6 +178,7 @@ class Vimeo:
         accepted_pattern = [
             r"^https:\/\/player.vimeo.com\/video\/(\d+)$",
             r"^https:\/\/vimeo.com\/(\d+)$",
+            r"^https://vimeo.com/groups/.+?/videos/(\d+)$",
         ]
         for pattern in accepted_pattern:
             match = re.findall(pattern, self._url)
