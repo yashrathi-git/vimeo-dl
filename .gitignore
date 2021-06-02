@@ -1,4 +1,5 @@
 /build
 /dist
 /vimeo_downloader.egg-info
-/test.py
+test
+__pycache__
