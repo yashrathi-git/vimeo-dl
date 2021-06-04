@@ -163,10 +163,16 @@ class Vimeo:
     Fetch meta data and download video streams.
     """
 
-    def __init__(self, url: str, embedded_on: Optional[str] = None):
+    def __init__(
+        self,
+        url: str,
+        embedded_on: Optional[str] = None,
+        cookies: Optional[str] = None,
+    ):
         self._url = url  # URL for the vimeo video
         self._video_id = self._validate_url()  # Video ID at the end of the link
         self._headers = headers
+        self._cookies = dict(cookies_are=cookies)
         if embedded_on:
             self._headers["Referer"] = embedded_on
 
@@ -193,8 +199,14 @@ class Vimeo:
         """
         Extracts the direct mp4 link for the vimeo video
         """
-
-        js_url = requests.get(config.format(self._video_id), headers=self._headers)
+        if self._cookies:
+            js_url = requests.get(
+                config.format(self._video_id),
+                headers=self._headers,
+                cookies=self._cookies,
+            )
+        else:
+            js_url = requests.get(config.format(self._video_id), headers=self._headers)
 
         if not js_url.ok:
             if js_url.status_code == 403:
