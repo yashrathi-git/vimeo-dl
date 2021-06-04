@@ -163,7 +163,7 @@ class Vimeo:
     Fetch meta data and download video streams.
     """
 
-    def __init__(self, url: str, embedded_on: str = None):
+    def __init__(self, url: str, embedded_on: Optional[str] = None):
         self._url = url  # URL for the vimeo video
         self._video_id = self._validate_url()  # Video ID at the end of the link
         self._headers = headers
