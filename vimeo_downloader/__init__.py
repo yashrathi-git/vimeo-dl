@@ -20,7 +20,7 @@ Usage:
     $ best_stream.download(download_directory='DirectoryName',filename='FileName')
     # For private or embed only videos
     $ v = Vimeo('https://player.vimeo.com/video/498617513',
-                  embedded_on='https://atpstar.com/plans-162.html') 
+                  embedded_on='https://atpstar.com/plans-162.html')
 """
 
 import requests
@@ -84,6 +84,9 @@ class Metadata(NamedTuple):
 
 
 class _Stream:
+    # default title of the video
+    title = None
+
     def __init__(self, direct_url: str, quality: str):
         self._direct_url = direct_url  # Direct url for the mp4 file
         self._quality = quality  # Quality of the stream
@@ -106,17 +109,19 @@ class _Stream:
         return self._quality
 
     def download(
-        self, download_directory: str = "", filename: str = None, mute: bool = False
+            self, download_directory: str = "", filename: str = None, mute: bool = False
     ):
         """
         Downloads the video with progress bar if `mute=False`
         """
 
-        if filename is None:
+        if filename is None and _Stream.title is None:
             try:
                 filename = re.findall(r"\/(\d+\.mp4|webm$)", self._direct_url)[0]
             except IndexError:
                 filename = f"{self._quality}.mp4"
+        elif filename is None and _Stream.title is not None:
+            filename = _Stream.title + ".mp4"
         else:
             filename += ".mp4"
         r = requests.get(self._direct_url, stream=True, headers=headers)
@@ -133,10 +138,10 @@ class _Stream:
             chunk_size = 1024
             if not mute:
                 for chunk in tqdm(
-                    iterable=r.iter_content(chunk_size=chunk_size),
-                    total=total_length // chunk_size,
-                    unit="KB",
-                    desc=filename,
+                        iterable=r.iter_content(chunk_size=chunk_size),
+                        total=total_length // chunk_size,
+                        unit="KB",
+                        desc=filename,
                 ):
                     if chunk:
                         f.write(chunk)
@@ -158,16 +163,15 @@ class _Stream:
 
 
 class Vimeo:
-
     """
     Fetch meta data and download video streams.
     """
 
     def __init__(
-        self,
-        url: str,
-        embedded_on: Optional[str] = None,
-        cookies: Optional[str] = None,
+            self,
+            url: str,
+            embedded_on: Optional[str] = None,
+            cookies: Optional[str] = None,
     ):
         self._url = url  # URL for the vimeo video
         self._video_id = self._validate_url()  # Video ID at the end of the link
@@ -220,7 +224,6 @@ class Vimeo:
                         request_conf_link = re.findall(pattern, html.text)[0].replace(
                             r"\/", "/"
                         )
-
                         js_url = requests.get(request_conf_link, headers=self._headers)
                         return js_url.json()
                     except IndexError:
@@ -298,7 +301,9 @@ class Vimeo:
         js_url = self._extractor()
         dl = []
         for stream in js_url["request"]["files"]["progressive"]:
-            dl.append(_Stream(quality=stream["quality"], direct_url=stream["url"]))
+            _stream_var = _Stream(quality=stream["quality"], direct_url=stream["url"])
+            _Stream.title = Vimeo.get_title(js_url) if _Stream.title is None else None
+            dl.append(_stream_var)
         dl.sort()
         return dl
 
@@ -308,3 +313,11 @@ class Vimeo:
 
     def __repr__(self):
         return f"Vimeo<{self._url}>"
+
+    @staticmethod
+    def get_title(js_url):
+        try:
+            title = js_url["video"]["title"]
+        except KeyError:
+            title = None
+        return title
