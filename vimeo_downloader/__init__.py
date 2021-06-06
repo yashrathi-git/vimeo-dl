@@ -302,7 +302,8 @@ class Vimeo:
         dl = []
         for stream in js_url["request"]["files"]["progressive"]:
             _stream_var = _Stream(quality=stream["quality"], direct_url=stream["url"])
-            _Stream.title = Vimeo.get_title(js_url) if _Stream.title is None else None
+            if _Stream.title is None:
+                _Stream.title = Vimeo.get_title(js_url)
             dl.append(_stream_var)
         dl.sort()
         return dl
