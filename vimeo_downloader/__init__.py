@@ -252,8 +252,10 @@ class Vimeo:
         """
         Retrieves meta data for the video
         """
-
-        video_info = requests.get(details.format(self._video_id), headers=self._headers)
+        if self._cookies:
+            video_info = requests.get(details.format(self._video_id), headers=self._headers, cookies=self._cookies)
+        else:
+            video_info = requests.get(details.format(self._video_id), headers=self._headers)
         if not video_info.ok:
             raise RequestError(
                 f"{video_info.status_code}: Unable to retrieve meta data."
