@@ -84,9 +84,10 @@ class Metadata(NamedTuple):
 
 
 class _Stream:
-    def __init__(self, direct_url: str, quality: str):
+    def __init__(self, direct_url: str, quality: str, title: str):
         self._direct_url = direct_url  # Direct url for the mp4 file
         self._quality = quality  # Quality of the stream
+        self.title = title
 
     def __repr__(self):
         return f"Stream({self._quality})"
@@ -112,13 +113,18 @@ class _Stream:
         Downloads the video with progress bar if `mute=False`
         """
 
-        if filename is None:
+        if (filename is None) and (self.title is None):
             try:
                 filename = re.findall(r"\/(\d+\.mp4|webm$)", self._direct_url)[0]
             except IndexError:
                 filename = f"{self._quality}.mp4"
+        elif (filename is None) and self.title:
+            filename = self.title
+            if not self.title.endswith(".mp4"):
+                filename += ".mp4"
         else:
-            filename += ".mp4"
+            if not filename.endswith(".mp4"):
+                filename += ".mp4"
         r = requests.get(self._direct_url, stream=True, headers=headers)
         if not r.ok:
             if r.status_code == 410:
@@ -298,9 +304,14 @@ class Vimeo:
         """
 
         js_url = self._extractor()
+        try:
+            title = js_url["video"]["title"]
+        except KeyError:
+            title = None
         dl = []
         for stream in js_url["request"]["files"]["progressive"]:
-            dl.append(_Stream(quality=stream["quality"], direct_url=stream["url"]))
+            stream_object = _Stream(quality=stream["quality"], direct_url=stream["url"], title=title)
+            dl.append(stream_object)
         dl.sort()
         return dl
 
