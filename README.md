@@ -7,8 +7,12 @@ Downloads Vimeo videos and retrieve metadata such as views, likes, comments, dur
 
 * [Features](#features)
 * [Installation](#installation)
-* [Examples](#examples)
 * [Usage](#usage)
+  - [Metadata](#metadata)
+  - [Download video](#download-video)
+  - [Download embed only videos](#downloading-embed-only-videos)
+  - [Downloading videos that require login](#downloading-videos-that-require-login)  
+* [Examples](#examples)
 
 
 # Features
@@ -19,9 +23,88 @@ Downloads Vimeo videos and retrieve metadata such as views, likes, comments, dur
 * Retrieve metadata such as views, likes, comments, duration of the video
 
 # Installation
-
 ```bash
 pip install vimeo_downloader
+```
+or download the latest version:
+```bash
+pip install git+https://github.com/yashrathi-git/vimeo_downloader
+```
+
+
+# Usage
+
+```python
+>> from vimeo_downloader import Vimeo
+>> v = Vimeo('https://vimeo.com/503166067')
+```
+## Metadata
+```python
+>> meta = v.metadata
+>> meta.title
+"We Don't Have To Know - Keli Holiday"
+>> meta.likes
+214
+>> meta.views
+8039
+>> meta._fields # List of all meta data fields
+('id', 'title', 'description'...) # Truncated for readability
+```
+## Download video
+```python
+>> s = v.streams
+>> s
+[Stream(240p), Stream(360p), Stream(540p), Stream(720p), Stream(1080p)]
+>> best_stream = s[-1] # Select the best stream
+>> best_stream.filesize
+'166.589421 MB'
+>> best_stream.direct_url
+'https://vod-progressive.akamaized.net.../2298326263.mp4'
+>> best_stream.download(download_directory='DirectoryName',
+                        filename='FileName')
+# Download video with progress bar and other information,
+# to disable this behaviour use mute=True
+```
+## Downloading embed only videos 
+```python
+>> from vimeo_downloader import Vimeo
+>> v = Vimeo('https://player.vimeo.com/video/498617513',
+              embedded_on='https://atpstar.com/plans-162.html') 
+```
+For embed only videos, also provide embedded_on parameter to specify the URL on which video is embedded without query parameters.
+```python
+>> v.streams
+[Stream(240p), Stream(360p), Stream(540p), Stream(720p), Stream(1080p)]
+>> v.streams[-1].download(download_directory='DirectoryName',
+                           filename='FileName')
+# Downloads the best stream with progress bar and other information, 
+# to disable this behaviour use mute=True
+```
+
+## Downloading videos that require login
+**It uses cookie to authenticate. You could get cookie like this:**
+
+While logged into your account, go to the video URL. Press Command + Shift + C or Control + Shift + C to get to developer tools. Go to network tab and reload the page. You would see all requests that were made. Click on the top one (request made to same URL you're on) and scroll down to "Request Headers", there you would find cookie parameter, copy its value.
+
+```python
+from vimeo_downloader import Vimeo
+
+cookies = """
+    cookie
+ """.strip()
+
+v = Vimeo(
+    url="URL",
+    cookies=cookies,
+)
+
+best_stream = v.best_stream
+mp4_url = best_stream.direct_url
+
+title = best_stream.title
+
+## Download
+best_stream.download()
 ```
 
 # Examples
@@ -73,55 +156,6 @@ for video in videos:
 	else: # If the loop never break
 		print('quality not found')
 ```
-# Usage
-
-```python
->>> from vimeo_downloader import Vimeo
->>> v = Vimeo('https://vimeo.com/503166067')
-```
-## Metadata
-```python
->>> meta = v.metadata
->>> meta.title
-"We Don't Have To Know - Keli Holiday"
->>> meta.likes
-214
->>> meta.views
-8039
->>> meta._fields # List of all meta data fields
-('id', 'title', 'description'...) # Truncated for readability
-```
-## Download stream
-```python
->>> s = v.streams
->>> s
-[Stream(240p), Stream(360p), Stream(540p), Stream(720p), Stream(1080p)]
->>> best_stream = s[-1] # Select the best stream
->>> best_stream.filesize
-'166.589421 MB'
->>> best_stream.direct_url
-'https://vod-progressive.akamaized.net.../2298326263.mp4'
->>> best_stream.download(download_directory='DirectoryName',
-                        filename='FileName')
-# Download video with progress bar and other information,
-# to disable this behaviour use mute=True
-```
-## Downloading private or embed only videos 
-```python
->>> from vimeo_downloader import Vimeo
->>> v = Vimeo('https://player.vimeo.com/video/498617513',
-              embedded_on='https://atpstar.com/plans-162.html') 
-```
-For embed only videos, also provide embedded_on parameter to specify the URL on which video is embedded without query parameters.
-```python
->>> v.streams
-[Stream(240p), Stream(360p), Stream(540p), Stream(720p), Stream(1080p)]
->>> v.streams[-1].download(download_directory='DirectoryName',
-                           filename='FileName')
-# Downloads the best stream with progress bar and other information, 
-# to disable this behaviour use mute=True
-```
-
 
 # License
 Distributed under the MIT licence. Read `LICENSE` for more information
