@@ -107,7 +107,7 @@ class _Stream:
         return self._quality
 
     def download(
-        self, download_directory: str = "", filename: str = None, mute: bool = False
+            self, download_directory: str = "", filename: str = None, mute: bool = False
     ):
         """
         Downloads the video with progress bar if `mute=False`
@@ -139,10 +139,10 @@ class _Stream:
             chunk_size = 1024
             if not mute:
                 for chunk in tqdm(
-                    iterable=r.iter_content(chunk_size=chunk_size),
-                    total=total_length // chunk_size,
-                    unit="KB",
-                    desc=filename,
+                        iterable=r.iter_content(chunk_size=chunk_size),
+                        total=total_length // chunk_size,
+                        unit="KB",
+                        desc=filename,
                 ):
                     if chunk:
                         f.write(chunk)
@@ -164,16 +164,15 @@ class _Stream:
 
 
 class Vimeo:
-
     """
     Fetch meta data and download video streams.
     """
 
     def __init__(
-        self,
-        url: str,
-        embedded_on: Optional[str] = None,
-        cookies: Optional[str] = None,
+            self,
+            url: str,
+            embedded_on: Optional[str] = None,
+            cookies: Optional[str] = None,
     ):
         self._url = url  # URL for the vimeo video
         self._video_id = self._validate_url()  # Video ID at the end of the link
@@ -218,7 +217,11 @@ class Vimeo:
         if not js_url.ok:
             if js_url.status_code == 403:
                 # If the response is forbidden it tries another way to fetch link
-                html = requests.get(self._url, headers=self._headers)
+                try:
+                    html = requests.get(self._url, headers=self._headers)
+                except AttributeError:
+                    raise RequestError("403: If the video is embed only, also provide the embed URL "
+                                       "on which it is embedded, Vimeo(url=<vimeo_url>,embedded_on=<url>)")
                 if html.ok:
                     try:
                         url = config.format(self._video_id).replace("/", r"\\/")
@@ -331,4 +334,8 @@ class Vimeo:
         return self.streams[-1]
 
     def __repr__(self):
-        return f"Vimeo<{self._url}>"
+        try:
+            repr_form = f"Vimeo<{self._url}>"
+        except AttributeError:
+            repr_form = f"Vimeo<{self._video_id}>"
+        return repr_form
