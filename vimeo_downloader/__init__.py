@@ -316,6 +316,16 @@ class Vimeo:
         dl.sort()
         return dl
 
+    @classmethod
+    def from_video_id(cls, video_id: str, embedded_on: Optional[str] = None, cookies: Optional[str] = None):
+        self = cls.__new__(cls)
+        self._video_id = video_id
+        self._headers = headers
+        self._cookies = dict(cookies_are=cookies)
+        if embedded_on:
+            self._headers["Referer"] = embedded_on
+        return self
+
     @property
     def best_stream(self) -> _Stream:
         return self.streams[-1]
