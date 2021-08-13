@@ -12,7 +12,7 @@ Downloads Vimeo videos and retrieve metadata such as views, likes, comments, dur
     - [Download video](#download-video)
     - [Download embed only videos](#downloading-embed-only-videos)
     - [Downloading videos that require login](#downloading-videos-that-require-login)
-    - [Download with video ID]()
+    - [Download with video ID](#download-video-with-video-id)
 * [Examples](#examples)
 
 # Features
@@ -22,6 +22,7 @@ Downloads Vimeo videos and retrieve metadata such as views, likes, comments, dur
 * Retrieve direct(.mp4 file) URL for the video.
 * Uses type-hints for better editor autocompletion
 * Retrieve metadata such as views, likes, comments, duration of the video
+* Tested for python 3.6 and above
 
 # Installation
 
