@@ -23,12 +23,13 @@ Usage:
                   embedded_on='https://atpstar.com/plans-162.html') 
 """
 
-import requests
+import os
 import re
 from collections import namedtuple
-from tqdm import tqdm
-import os
 from typing import List, NamedTuple, Optional
+
+import requests
+from tqdm import tqdm
 
 headers = {
     "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0",
@@ -314,7 +315,10 @@ class Vimeo:
             title = None
         dl = []
         for stream in js_url["request"]["files"]["progressive"]:
-            stream_object = _Stream(quality=stream["quality"], direct_url=stream["url"], title=title)
+            url = stream["url"]
+            if not requests.get(url, stream=True).ok:
+                continue
+            stream_object = _Stream(quality=stream["quality"], direct_url=url, title=title)
             dl.append(stream_object)
         dl.sort()
         return dl
