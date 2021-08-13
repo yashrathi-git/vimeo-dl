@@ -2,4 +2,5 @@
 /dist
 /vimeo_downloader.egg-info
 test
+.idea
 __pycache__

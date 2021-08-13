@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "vimeo_downloader"
+version = "0.3.1"
+description = "Download videos and retrieve metadata from Vimeo."
+authors = ["Yash Rathi <yashrathicricket@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/yashrathi-git/vimeo_downloader"
+documentation = "https://github.com/yashrathi-git/vimeo_downloader#readme"
+keywords = [
+        "vimeo",
+        "vimeo-api",
+        "vimeo meta data",
+        "vimeo downloader",
+        "vimeo_downloader",
+    ]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/yashrathi-git/vimeo_downloader/issues"
+
+[tool.poetry.dependencies]
+python = ">=3.6.0"
+requests = "^2.26.0"
+tqdm = "^4.62.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
