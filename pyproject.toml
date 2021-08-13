@@ -8,12 +8,12 @@ readme = "README.md"
 homepage = "https://github.com/yashrathi-git/vimeo_downloader"
 documentation = "https://github.com/yashrathi-git/vimeo_downloader#readme"
 keywords = [
-        "vimeo",
-        "vimeo-api",
-        "vimeo meta data",
-        "vimeo downloader",
-        "vimeo_downloader",
-    ]
+    "vimeo",
+    "vimeo-api",
+    "vimeo meta data",
+    "vimeo downloader",
+    "vimeo_downloader",
+]
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/yashrathi-git/vimeo_downloader/issues"
