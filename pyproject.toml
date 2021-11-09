@@ -19,12 +19,16 @@ keywords = [
 "Bug Tracker" = "https://github.com/yashrathi-git/vimeo_downloader/issues"
 
 [tool.poetry.dependencies]
-python = ">=3.6.0"
+python = ">=3.6.0,<4"
 requests = "^2.26.0"
-tqdm = "^4.62.0"
+tqdm = "^4.62.3"
+urllib3 = [
+	{ version = ">=1.26", python = ">=3.10,<4" }
+]
+
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.4"
+pytest = "^6.2.5"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
