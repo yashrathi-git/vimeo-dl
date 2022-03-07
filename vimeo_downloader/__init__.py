@@ -85,10 +85,13 @@ class Metadata(NamedTuple):
 
 
 class _Stream:
-    def __init__(self, direct_url: str, quality: str, title: str):
+    def __init__(self, direct_url: str, quality: str, title: str, fps:int, mime:str, id:str):
         self._direct_url = direct_url  # Direct url for the mp4 file
         self._quality = quality  # Quality of the stream
         self.title = title
+        self._fps = fps
+        self._mime = mime
+        self._id = id 
 
     def __repr__(self):
         return f"Stream({self._quality})"
@@ -106,7 +109,17 @@ class _Stream:
     @property
     def quality(self):
         return self._quality
-
+     
+    @property
+    def fps(self):
+        return self._fps    
+    @property
+    def mime(self):
+        return self._mime
+    @property
+    def id(self):
+        return self._id  
+      
     def download(
             self, download_directory: str = "", filename: str = None, mute: bool = False
     ):
@@ -316,9 +329,14 @@ class Vimeo:
         dl = []
         for stream in js_url["request"]["files"]["progressive"]:
             url = stream["url"]
+            #to make more funny
+            fps = stream["fps"]
+            mime = stream["mime"]
+            id = stream["id"]
+            #to make more funny
             if not requests.get(url, stream=True).ok:
                 continue
-            stream_object = _Stream(quality=stream["quality"], direct_url=url, title=title)
+            stream_object = _Stream(quality=stream["quality"], direct_url=url, title=title, fps=fps, mime=mime, id=id)#passing extra funny
             dl.append(stream_object)
         dl.sort()
         return dl
