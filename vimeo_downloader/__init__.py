@@ -168,7 +168,13 @@ class Vimeo:
     """
     Fetch meta data and download video streams.
     """
-
+    _accepted_pattern = [
+                            r"^https:\/\/player.vimeo.com\/video\/(\d+)",
+                            r"^https:\/\/vimeo.com\/(\d+)",
+                            r"^https://vimeo.com/groups/.+?/videos/(\d+)",
+                            r"^https://vimeo.com/manage/videos/(\d+)"
+                        ]
+                        
     def __init__(
             self,
             url: str,
@@ -176,27 +182,39 @@ class Vimeo:
             cookies: Optional[str] = None,
     ):
         self._url = url  # URL for the vimeo video
-        self._video_id = self._validate_url()  # Video ID at the end of the link
+        self._validate_url()
+        self._video_id = self._extract_video_id()  # Video ID at the end of the link
+        self._params = self._extract_parameters()
         self._headers = headers
         self._cookies = dict(cookies_are=cookies)
         if embedded_on:
             self._headers["Referer"] = embedded_on
-
+    
+    
+    def _extract_video_id(self):
+        """
+        This validates if the URL is of Vimeo and returns the video ID
+        """
+        for pattern in self._accepted_pattern:
+            match = re.findall(pattern, self._url)
+            if match:
+                return match[0]
+    
+    def _extract_parameters(self):
+        """
+        This validates if the URL is of Vimeo and returns the video ID
+        """
+        pattern = "(?:\?|&|;)([^=]+)=([^&|;]+)"
+        return dict(re.findall(pattern, self._url))
+        
     def _validate_url(self):
         """
         This validates if the URL is of Vimeo and returns the video ID
         """
-
-        accepted_pattern = [
-            r"^https:\/\/player.vimeo.com\/video\/(\d+)$",
-            r"^https:\/\/vimeo.com\/(\d+)$",
-            r"^https://vimeo.com/groups/.+?/videos/(\d+)$",
-            r"^https://vimeo.com/manage/videos/(\d+)$"
-        ]
-        for pattern in accepted_pattern:
+        for pattern in self._accepted_pattern:
             match = re.findall(pattern, self._url)
             if match:
-                return match[0]
+                return True
         # If none of the patterns is matched exception is raised
         raise URLNotSupported(
             f"{self._url} is not supported. Make sure you don't include query parameters in the url"
@@ -211,9 +229,10 @@ class Vimeo:
                 config.format(self._video_id),
                 headers=self._headers,
                 cookies=self._cookies,
+                params=self._params
             )
         else:
-            js_url = requests.get(config.format(self._video_id), headers=self._headers)
+            js_url = requests.get(config.format(self._video_id), headers=self._headers, params=self._params)
 
         if not js_url.ok:
             if js_url.status_code == 403:
