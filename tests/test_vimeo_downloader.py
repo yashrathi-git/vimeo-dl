@@ -12,12 +12,12 @@ TEST_DATA = [
     {'url': 'https://vimeo.com/503166067', 'title': "We Don't Have To Know - Keli Holiday"},
     {'url': 'https://player.vimeo.com/video/498617513', 'title': 'NEET ekalavya all',
      'embedded_on': 'https://atpstar.com/plans-162.html'},
-    {'url': 'https://player.vimeo.com/video/528717721', 'title': 'ENGLISH LECTURE-11'},
+    {'url': 'https://player.vimeo.com/video/98044508', 'title': 'Pier Solar OUYA Official Trailer'},
 ]
 
 VIDEO_ID_DATA = [
-    {'url': 'https://player.vimeo.com/video/528717721', 'title': 'ENGLISH LECTURE-11',
-     'video_id': '528717721'}
+    {'url': 'https://player.vimeo.com/video/98044508', 'title': 'Pier Solar OUYA Official Trailer',
+     'video_id': '98044508'}
 ]
 
 
