@@ -29,4 +29,4 @@ jobs:
           poetry run pytest
       - name: Check code style with black
         run: |
-          poetry run black --check .
+          poetry run black --check vimeo_downloader/__init__.py
