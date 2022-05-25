@@ -153,6 +153,7 @@ class _Stream:
                     if chunk:
                         f.write(chunk)
                         f.flush()
+        return dp #it is essential for file response. 
 
     @property
     def filesize(self) -> str:
