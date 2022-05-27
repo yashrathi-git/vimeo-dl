@@ -194,11 +194,15 @@ class Vimeo:
         This validates if the URL is of Vimeo and returns the video ID
         """
 
+        # Remember, the regexes are matched in order
+
         accepted_pattern = [
             r"^https:\/\/player.vimeo.com\/video\/(\d+)$",
             r"^https:\/\/vimeo.com\/(\d+)$",
             r"^https://vimeo.com/groups/.+?/videos/(\d+)$",
             r"^https://vimeo.com/manage/videos/(\d+)$",
+            r"^https://vimeo.com/(\d+)/[a-zA-Z0-9]+$",
+            r"^https://vimeo.com/channels/staffpicks/(\d+)$",
         ]
         for pattern in accepted_pattern:
             match = re.findall(pattern, self._url)
