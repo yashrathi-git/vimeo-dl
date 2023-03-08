@@ -126,7 +126,7 @@ class _Stream:
         else:
             if not filename.endswith(".mp4"):
                 filename += ".mp4"
-        r = session.get(self._direct_url, stream=True, headers=headers, verify=False,)
+        r = session.get(self._direct_url, stream=True, headers=headers)
         if not r.ok:
             if r.status_code == 410:
                 raise URLExpired("The download URL has expired.")
@@ -161,7 +161,7 @@ class _Stream:
         Returns str with filesize in MB.
         """
 
-        r = session.get(self._direct_url, stream=True, headers=headers, verify=False,)
+        r = session.get(self._direct_url, stream=True, headers=headers)
         return str(int(r.headers.get("content-length")) / 10**6) + " MB"
 
 
@@ -223,15 +223,13 @@ class Vimeo:
                     config.format(self._video_id),
                     headers=self._headers,
                     cookies=self._cookies,
-                    params=self._params,
-                    verify=False
+                    params=self._params
                 )
             else:
                 js_url = session.get(
                     config.format(self._video_id),
                     headers=self._headers,
-                    params=self._params,
-                    verify=False
+                    params=self._params
 
                 )
         else:
@@ -239,8 +237,7 @@ class Vimeo:
                 password_config.format(self._video_id),
                 headers=self._headers,
                 params=self._params,
-                data=dict(password=self._password),
-                verify=False
+                data=dict(password=self._password)
             )
 
 
@@ -249,7 +246,7 @@ class Vimeo:
                 # If the response is forbidden it tries another way to fetch link
                 try:
                     html = session.get(
-                        self._url, headers=self._headers, params=self._params, verify=False
+                        self._url, headers=self._headers, params=self._params
                     )
                 except AttributeError:
                     raise RequestError(
@@ -265,7 +262,7 @@ class Vimeo:
                             r"\/", "/"
                         )
 
-                        js_url = session.get(request_conf_link, headers=self._headers, verify=False)
+                        js_url = session.get(request_conf_link, headers=self._headers)
                         return js_url.json()
                     except IndexError:
                         raise UnableToParseHtml("Couldn't find config url")
@@ -300,8 +297,7 @@ class Vimeo:
             if self._cookies:
                 video_info = session.get(
                     details.format(self._video_id),
-                    headers=self._headers, 
-                    verify=False,
+                    headers=self._headers,
                     cookies=self._cookies,
                 )
             else:
@@ -313,8 +309,7 @@ class Vimeo:
                 password_config.format(self._video_id),
                 headers=self._headers,
                 params=self._params,
-                data=dict(password=self._password),
-                verify=False
+                data=dict(password=self._password)
             )
 
 
@@ -369,7 +364,7 @@ class Vimeo:
         dl = []
         for stream in js_url["request"]["files"]["progressive"]:
             url = stream["url"]
-            if not session.get(url, stream=True, verify=False,).ok:
+            if not session.get(url, stream=True).ok:
                 continue
             stream_object = _Stream(
                 quality=stream["quality"], direct_url=url, title=title
