@@ -14,12 +14,13 @@ TEST_DATA = [
         "title": "We Don't Have To Know - Keli Holiday",
         "id": "503166067",
     },
-    {
-        "url": "https://player.vimeo.com/video/498617513",
-        "title": "NEET ekalavya all",
-        "embedded_on": "https://atpstar.com/plans-162.html",
-        "id": "498617513",
-    },
+    # I have to comment out this test, because this video is abscent 
+    # {
+    #     "url": "https://player.vimeo.com/video/498617513",
+    #     "title": "NEET ekalavya all",
+    #     "embedded_on": "https://atpstar.com/plans-162.html",
+    #     "id": "498617513",
+    # },
     {
         "url": "https://player.vimeo.com/video/98044508?some_random_p=parameter",
         "title": "Pier Solar OUYA Official Trailer",
