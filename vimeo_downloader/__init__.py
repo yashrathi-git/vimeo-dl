@@ -384,12 +384,14 @@ class Vimeo:
         video_id: str,
         embedded_on: Optional[str] = None,
         cookies: Optional[str] = None,
+        password: Optional[str] = None,
     ):
         self = cls.__new__(cls)
         self._video_id = video_id
         self._headers = headers
         self._cookies = dict(cookies_are=cookies)
         self._params = {}
+        self._password = b64encode(password.encode()).decode() if password else None
         if embedded_on:
             self._headers["Referer"] = embedded_on
         return self
