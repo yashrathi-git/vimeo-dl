@@ -27,7 +27,7 @@ import re
 from collections import namedtuple
 from typing import List, NamedTuple, Optional
 from urllib.parse import parse_qs, urlparse
-
+from base64 import b64encode
 import requests
 from tqdm import tqdm
 
@@ -35,8 +35,9 @@ headers = {
     "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0",
 }
 config = "https://player.vimeo.com/video/{}/config"
+password_config ="https://player.vimeo.com/video/{}/check-password"
 details = "http://vimeo.com/api/v2/video/{}.json"
-
+session = requests.Session()
 
 class URLNotSupported(Exception):
     pass
@@ -113,7 +114,6 @@ class _Stream:
         """
         Downloads the video with progress bar if `mute=False`
         """
-
         if (filename is None) and (self.title is None):
             try:
                 filename = re.findall(r"\/(\d+\.mp4|webm$)", self._direct_url)[0]
@@ -126,7 +126,7 @@ class _Stream:
         else:
             if not filename.endswith(".mp4"):
                 filename += ".mp4"
-        r = requests.get(self._direct_url, stream=True, headers=headers)
+        r = session.get(self._direct_url, stream=True, headers=headers, verify=False,)
         if not r.ok:
             if r.status_code == 410:
                 raise URLExpired("The download URL has expired.")
@@ -161,7 +161,7 @@ class _Stream:
         Returns str with filesize in MB.
         """
 
-        r = requests.get(self._direct_url, stream=True, headers=headers)
+        r = session.get(self._direct_url, stream=True, headers=headers, verify=False,)
         return str(int(r.headers.get("content-length")) / 10**6) + " MB"
 
 
@@ -175,6 +175,7 @@ class Vimeo:
         url: str,
         embedded_on: Optional[str] = None,
         cookies: Optional[str] = None,
+        password: Optional[str] = None,
     ):
         self._url = (
             urlparse(url)._replace(query=None).geturl()
@@ -183,6 +184,7 @@ class Vimeo:
         self._headers = headers
         self._cookies = dict(cookies_are=cookies)
         self._params = self._extract_query(url)
+        self._password = b64encode(password.encode()).decode() if password else None
         if embedded_on:
             self._headers["Referer"] = embedded_on
 
@@ -215,26 +217,39 @@ class Vimeo:
         """
         Extracts the direct mp4 link for the vimeo video
         """
-        if self._cookies.get("cookies_are") is not None:
-            js_url = requests.get(
-                config.format(self._video_id),
-                headers=self._headers,
-                cookies=self._cookies,
-                params=self._params,
-            )
+        if not self._password:
+            if self._cookies.get("cookies_are") is not None:
+                js_url = session.get(
+                    config.format(self._video_id),
+                    headers=self._headers,
+                    cookies=self._cookies,
+                    params=self._params,
+                    verify=False
+                )
+            else:
+                js_url = session.get(
+                    config.format(self._video_id),
+                    headers=self._headers,
+                    params=self._params,
+                    verify=False
+
+                )
         else:
-            js_url = requests.get(
-                config.format(self._video_id),
+            js_url = session.post(
+                password_config.format(self._video_id),
                 headers=self._headers,
                 params=self._params,
+                data=dict(password=self._password),
+                verify=False
             )
+
 
         if not js_url.ok:
             if js_url.status_code == 403:
                 # If the response is forbidden it tries another way to fetch link
                 try:
-                    html = requests.get(
-                        self._url, headers=self._headers, params=self._params
+                    html = session.get(
+                        self._url, headers=self._headers, params=self._params, verify=False
                     )
                 except AttributeError:
                     raise RequestError(
@@ -250,7 +265,7 @@ class Vimeo:
                             r"\/", "/"
                         )
 
-                        js_url = requests.get(request_conf_link, headers=self._headers)
+                        js_url = session.get(request_conf_link, headers=self._headers, verify=False)
                         return js_url.json()
                     except IndexError:
                         raise UnableToParseHtml("Couldn't find config url")
@@ -281,22 +296,36 @@ class Vimeo:
         """
         Retrieves meta data for the video
         """
-        if self._cookies:
-            video_info = requests.get(
-                details.format(self._video_id),
-                headers=self._headers,
-                cookies=self._cookies,
-            )
+        if not self._password:
+            if self._cookies:
+                video_info = session.get(
+                    details.format(self._video_id),
+                    headers=self._headers, 
+                    verify=False,
+                    cookies=self._cookies,
+                )
+            else:
+                video_info = session.get(
+                    details.format(self._video_id), headers=self._headers
+                )
         else:
-            video_info = requests.get(
-                details.format(self._video_id), headers=self._headers
+            video_info = session.post(
+                password_config.format(self._video_id),
+                headers=self._headers,
+                params=self._params,
+                data=dict(password=self._password),
+                verify=False
             )
+
+
         if not video_info.ok:
             raise RequestError(
                 f"{video_info.status_code}: Unable to retrieve meta data."
             )
         try:
             video_info = video_info.json()
+            if self._password:
+                video_info = [video_info.get('video', {})]
         except Exception as e:
             raise RequestError(f"Couldn't retrieve meta data: {e}")
         return video_info
@@ -340,7 +369,7 @@ class Vimeo:
         dl = []
         for stream in js_url["request"]["files"]["progressive"]:
             url = stream["url"]
-            if not requests.get(url, stream=True).ok:
+            if not session.get(url, stream=True, verify=False,).ok:
                 continue
             stream_object = _Stream(
                 quality=stream["quality"], direct_url=url, title=title
